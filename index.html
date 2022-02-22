@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>timer</title>
+</head>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content {
+        text-align: center;
+    }
+
+    #timer {
+        font-size: 24px;
+    }
+
+    #control {
+        cursor: pointer;
+    }
+</style>
+
+<body>
+
+    <div class="containter">
+        <div class="list">
+            <h3 class="content">计时器</h3>
+            <div class="content" id="timer">
+                01:12
+            </div>
+            <p class="content"><span id="control">▶️</span></p>
+        </div>
+    </div>
+
+    <script>
+        var intervalId
+        let play = "▶️"
+        let pause = "⏸"
+        let allTime = 0
+        let currentTime = 0
+        const timeElement = document.getElementById("timer")
+        const controler = document.getElementById("control")
+        const timeContent = timeElement.innerHTML
+        let [minutes, seconds] = timeContent.split(":")
+        minutes = parseInt(minutes)
+        seconds = parseInt(seconds)
+        const normalize = n => n < 10 ? "0" + n : n
+
+        // 计时器
+        function process() {
+            seconds--
+            currentTime--
+
+            if (minutes === 0 && seconds === 0) {
+                clearInterval(intervalId)
+            } else if (seconds === 0) {
+                minutes -= 1
+                seconds = 59
+            }
+
+            // 显示颜色和时间
+            timeElement.style.color = `hsl(${currentTime / allTime * 100}, 71%, 50%)`
+            timeElement.innerHTML = normalize(minutes) + ":" + normalize(seconds)
+        }
+
+        // 控制按钮
+        function control() {
+            if (controler.innerText === play) {
+                intervalId = setInterval(process, 100);
+                controler.innerText = pause
+            } else {
+                controler.innerText = play
+                clearInterval(intervalId)
+            }
+            currentTime = allTime = minutes * 60 + seconds
+        }
+
+        controler.onclick = control
+    </script>
+</body>
+
+</html>
