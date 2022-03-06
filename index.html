@@ -17,8 +17,17 @@
     }
 
     .container {
+        height: 100%;
+        display: flex;
+    }
+
+    .list {
+        flex: 1;
+        height: 100%;
         display: flex;
         flex-direction: column;
+        justify-content: center;
+
     }
 
     .content {
@@ -31,12 +40,13 @@
 
     #control {
         cursor: pointer;
+        transition: 1s;
     }
 </style>
 
 <body>
 
-    <div class="containter">
+    <div class="container">
         <div class="list">
             <h3 class="content">计时器</h3>
             <div class="content" id="timer">
@@ -44,6 +54,7 @@
             </div>
             <p class="content"><span id="control">▶️</span></p>
         </div>
+        <a href="./src/calculator.html" target="blank">计算器</a>
     </div>
 
     <script>
@@ -52,13 +63,15 @@
         let pause = "⏸"
         let allTime = 0
         let currentTime = 0
+        let countDown = 0
+
         const timeElement = document.getElementById("timer")
         const controler = document.getElementById("control")
         const timeContent = timeElement.innerHTML
-        let [minutes, seconds] = timeContent.split(":")
-        minutes = parseInt(minutes)
-        seconds = parseInt(seconds)
-        const normalize = n => n < 10 ? "0" + n : n
+        let minutes, seconds
+        const normalize = n => n < 10 ? `0${n}` : n
+        const display = () => timeElement.innerHTML = normalize(minutes) + ":" + normalize(seconds)
+
 
         // 计时器
         function process() {
@@ -67,20 +80,27 @@
 
             if (minutes === 0 && seconds === 0) {
                 clearInterval(intervalId)
+                controler.innerText = "🥳"
+                controler.style.fontSize = "6rem"
+                controler.onclick = null
+                timeElement.style.color = "black"
+                display()
+                return;
             } else if (seconds === 0) {
                 minutes -= 1
                 seconds = 59
             }
 
-            // 显示颜色和时间
+            // 控制颜色
             timeElement.style.color = `hsl(${currentTime / allTime * 100}, 71%, 50%)`
-            timeElement.innerHTML = normalize(minutes) + ":" + normalize(seconds)
+            display() // 时间
         }
+
 
         // 控制按钮
         function control() {
             if (controler.innerText === play) {
-                intervalId = setInterval(process, 100);
+                intervalId = setInterval(process, 10);
                 controler.innerText = pause
             } else {
                 controler.innerText = play
@@ -89,7 +109,17 @@
             currentTime = allTime = minutes * 60 + seconds
         }
 
-        controler.onclick = control
+        function lunch() {
+            countDown = prompt("How long?", "00:30");
+            console.log(countDown);
+            [minutes, seconds] = countDown.split(":")
+            minutes = parseInt(minutes)
+            seconds = parseInt(seconds)
+            display()
+            controler.onclick = control
+        }
+
+        lunch()
     </script>
 </body>
 
